@@ -59,7 +59,7 @@ public class MainActivity extends Activity
 
 				Log.i(LOG_TAG, "Network is Connected");
 
-				new GetStopsTask(this).execute();
+				new InsertDBData(this).execute();
 
 
 			} else
@@ -75,15 +75,6 @@ public class MainActivity extends Activity
 		{
 			Log.d(LOG_TAG, "Finally");
 		}
-
-        /*final Button button = (Button) findViewById(R.id.button_go);
-		  button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-            }
-        });
-*/
 	}
 
 
@@ -118,9 +109,7 @@ public class MainActivity extends Activity
 	public static class PlaceholderFragment extends Fragment
 	{
 
-		public PlaceholderFragment()
-		{
-		}
+		public PlaceholderFragment() {}
 
 		@Override
 		public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
@@ -130,16 +119,16 @@ public class MainActivity extends Activity
 		}
 	}
 
-	private class GetStopsTask extends AsyncTask<Void, Void, String[]>
+	private class InsertDBData extends AsyncTask<Void, Void, String[]>
 	{
 		private Context context;
 
-		public GetStopsTask(Context context)
+		public InsertDBData(Context context)
 		{
 			this.context = context;
 		}
 
-		private final String LOG_TAG = GetStopsTask.class.getSimpleName();
+		private final String LOG_TAG = InsertDBData.class.getSimpleName();
 
 		private ProgressDialog progressDialog = new ProgressDialog(MainActivity.this);
 
