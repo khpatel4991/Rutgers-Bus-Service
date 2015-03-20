@@ -10,7 +10,10 @@ public class DBContract
 	//Helper Strings
 	public static final String CREATE_TABLE = "CREATE TABLE ";
 	public static final String DROP_TABLE = "DROP TABLE IF EXISTS ";
+	public static final String SELECT_ALL = "SELECT * FROM ";
 	public static final String COMMA_SEP = ",";
+	public static final String SORT_BY_TITLE = " ORDER BY title ASC";
+
 
 	public DBContract() {}
 
@@ -27,6 +30,7 @@ public class DBContract
 				COLUMN_NAME_ROUTE_TITLE + " TEXT NOT NULL);";
 
 		public static final String DELETE_ROUTE_TABLE_QUERY = DROP_TABLE + TABLE_NAME;
+		public static final String ALL_SORTED_ROUTE_QUERY = SELECT_ALL + TABLE_NAME + SORT_BY_TITLE + ";";
 	}
 
 	public static abstract class StopEntry implements BaseColumns
@@ -45,5 +49,7 @@ public class DBContract
 				COLUMN_NAME_STOP_LON + " REAL NOT NULL);";
 
 		public static final String DELETE_ROUTE_TABLE_QUERY = DROP_TABLE + TABLE_NAME;
+
+		public static final String ALL_SORTED_STOP_QUERY = SELECT_ALL + TABLE_NAME + SORT_BY_TITLE + ";";
 	}
 }
