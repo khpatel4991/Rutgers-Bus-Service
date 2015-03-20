@@ -3,8 +3,10 @@ package com.rutgers.kashyap.rutgersbusservice;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.ProgressDialog;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
@@ -20,6 +22,8 @@ import android.widget.Spinner;
 
 import com.rutgers.kashyap.rutgersbusservice.Graph.Edge;
 import com.rutgers.kashyap.rutgersbusservice.Graph.Stop;
+import com.rutgers.kashyap.rutgersbusservice.data.DBHelper;
+import com.rutgers.kashyap.rutgersbusservice.data.DBContract;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -132,7 +136,10 @@ public class MainActivity extends Activity
 
 		private ProgressDialog progressDialog = new ProgressDialog(MainActivity.this);
 
-		private final static String URL_STOPS = "http://runextbus.herokuapp.com/config";
+		private DBHelper _DBHelper = new DBHelper(MainActivity.this);
+
+		private final static String URL_CONFIG = "http://runextbus.herokuapp.com/config";
+
 
 		private final static String STOPS = "stops";
 		private final static String TITLE = "title";
@@ -159,11 +166,10 @@ public class MainActivity extends Activity
 		@Override
 		protected String[] doInBackground(Void... voids)
 		{
-
 			try
 			{
 				Log.d(LOG_TAG, "In DO");
-				URL url = new URL(URL_STOPS);
+				URL url = new URL(URL_CONFIG);
 				HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 				conn.setReadTimeout(10000 /* milliseconds */);
 				conn.setConnectTimeout(15000 /* milliseconds */);
@@ -194,7 +200,6 @@ public class MainActivity extends Activity
 				{
 					return null;
 				}
-				Log.i(LOG_TAG, "183");
 
 				JSONObject jsonObject;
 				// Convert string to object
@@ -205,8 +210,7 @@ public class MainActivity extends Activity
 				{
 					return null;
 				}
-
-
+				insertData(jsonObject);
 				return getStops(jsonObject);
 
 
@@ -228,22 +232,43 @@ public class MainActivity extends Activity
 			adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 			spinnerSource.setAdapter(adapter);
 			spinnerDestination.setAdapter(adapter);
-
-            /*spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                @Override
-                public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id)
-                {
-
-                }
-
-                @Override
-                public void onNothingSelected(AdapterView<?> adapterView)
-                {
-
-                }
-            });*/
-
 			this.progressDialog.dismiss();
+		}
+
+		private void insertData(JSONObject jsonObject) throws JSONException
+		{
+			Log.d(LOG_TAG, "insertData");
+			SQLiteDatabase db = _DBHelper.getWritableDatabase();
+
+			//Routes Table
+			JSONObject routesJSON = jsonObject.getJSONObject(ROUTES);
+			JSONArray routesJSONArray = routesJSON.names();
+			for (int i = 0; i < routesJSONArray.length(); i ++)
+			{
+				JSONObject routeJSON = routesJSON.getJSONObject(routesJSONArray.getString(i));
+				ContentValues values = new ContentValues();
+				values.put(DBContract.RouteEntry.COLUMN_NAME_ROUTE_TAG, routesJSONArray.getString(i));
+				values.put(DBContract.RouteEntry.COLUMN_NAME_ROUTE_TITLE, routeJSON.getString(TITLE));
+				db.insert(DBContract.RouteEntry.TABLE_NAME, null, values);
+			}
+
+			//Stops Table
+			JSONObject stopsJSON = jsonObject.getJSONObject(STOPS);
+			JSONArray stopsJSONArray = stopsJSON.names();
+			for (int i = 0; i < stopsJSONArray.length(); i++)
+			{
+				JSONObject stopJSON = stopsJSON.getJSONObject(stopsJSONArray.getString(i));
+				ContentValues values = new ContentValues();
+				values.put(DBContract.StopEntry.COLUMN_NAME_STOP_TAG, stopsJSONArray.getString(i));
+				values.put(DBContract.StopEntry.COLUMN_NAME_STOP_TITLE, stopJSON.getString(TITLE));
+				values.put(DBContract.StopEntry.COLUMN_NAME_STOP_LAT, stopJSON.getDouble(LATITUDE));
+				values.put(DBContract.StopEntry.COLUMN_NAME_STOP_LON, stopJSON.getDouble(LONGITUDE));
+				db.insert(DBContract.StopEntry.TABLE_NAME, null, values);
+				Stop newStop = new Stop(stopJSON.getInt(STOPID), stopJSON.getDouble(LATITUDE), stopJSON.getDouble(LONGITUDE), stopsJSONArray.getString(i), stopJSON.getString(TITLE));
+				stopsMap.put(stopsJSONArray.getString(i), newStop);
+
+			}
+
 		}
 
 		private String[] getStops(JSONObject jsonObject) throws JSONException
