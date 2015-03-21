@@ -11,7 +11,7 @@
     <Spinner
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/spinner_source"
+        android:id="@+id/spinner_source_stop"
         android:spinnerMode="dialog"
         android:layout_below="@+id/label_source"
         android:layout_alignParentLeft="true"
@@ -21,7 +21,7 @@
     <Spinner
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/spinner_destination"
+        android:id="@+id/spinner_destination_stop"
         android:spinnerMode="dialog"
         android:layout_above="@+id/button_go"
         android:layout_alignParentLeft="true"
@@ -54,7 +54,7 @@
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="@string/destination"
         android:id="@+id/label_destination"
-        android:layout_above="@+id/spinner_destination"
+        android:layout_above="@+id/spinner_destination_stop"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_marginBottom="41dp"/>

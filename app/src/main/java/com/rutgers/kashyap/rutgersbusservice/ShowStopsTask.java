@@ -40,15 +40,15 @@ public class ShowStopsTask extends AsyncTask<Void, Void, String[]>
 
 	private HashMap<String, Stop> stopsMap = new HashMap<String, Stop>();
 
-	private ProgressDialog progressDialog;
+	private ProgressDialog _progressDialog;
 
 	private DBHelper _DBHelper;
 
 
 	public ShowStopsTask(Activity activity)
 	{
-		this._activity = activity;
-		progressDialog = new ProgressDialog(_activity);
+		_activity = activity;
+		_progressDialog = new ProgressDialog(_activity);
 		_DBHelper = new DBHelper(_activity);
 	}
 
@@ -73,8 +73,8 @@ public class ShowStopsTask extends AsyncTask<Void, Void, String[]>
 	protected void onPreExecute()
 	{
 		super.onPreExecute();
-		progressDialog.setMessage("Downloading your data...");
-		progressDialog.show();
+		_progressDialog.setMessage("Downloading your data...");
+		_progressDialog.show();
 	}
 
 	@Override
@@ -145,20 +145,20 @@ public class ShowStopsTask extends AsyncTask<Void, Void, String[]>
 	protected void onPostExecute(String[] stops)
 	{
 		super.onPostExecute(stops);
-		final Spinner spinnerSource = (Spinner) _activity.findViewById(R.id.spinner_destination);
-		final Spinner spinnerDestination = (Spinner) _activity.findViewById(R.id.spinner_source);
-		ArrayAdapter<String> adapter = new ArrayAdapter<String>(_activity, android.R.layout.simple_spinner_item, stops);
+		final Spinner spinnerSource = (Spinner) _activity.findViewById(R.id.spinner_destination_stop);
+		final Spinner spinnerDestination = (Spinner) _activity.findViewById(R.id.spinner_source_stop);
+		ArrayAdapter<String> adapter = new ArrayAdapter<>(_activity, android.R.layout.simple_spinner_item, stops);
 		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		spinnerSource.setAdapter(adapter);
 		spinnerDestination.setAdapter(adapter);
-		progressDialog.dismiss();
+		_progressDialog.dismiss();
 	}
 
 	private String[] getStopsFromDB()
 	{
 		SQLiteDatabase db = _DBHelper.getReadableDatabase();
 		List<String> stops = new ArrayList<>();
-		Cursor c = db.rawQuery(DBContract.StopEntry.ALL_SORTED_STOP_QUERY, null);
+		Cursor c = db.rawQuery(DBContract.StopEntry.SELECT_ALL_SORTED_QUERY, null);
 		if(c.moveToFirst())
 		{
 			do
@@ -181,9 +181,22 @@ public class ShowStopsTask extends AsyncTask<Void, Void, String[]>
 		for (int i = 0; i < routesJSONArray.length(); i ++)
 		{
 			JSONObject routeJSON = routesJSON.getJSONObject(routesJSONArray.getString(i));
+
 			ContentValues values = new ContentValues();
 			values.put(DBContract.RouteEntry.COLUMN_NAME_ROUTE_TAG, routesJSONArray.getString(i));
 			values.put(DBContract.RouteEntry.COLUMN_NAME_ROUTE_TITLE, routeJSON.getString(TITLE));
+
+			JSONArray stopsForRoute = routeJSON.getJSONArray(STOPS);
+			Log.d(LOG_TAG, "route= " + routesJSONArray.getString(i) + " len=" + stopsForRoute.length());
+			for(int j = 0; j < stopsForRoute.length(); j++)
+			{
+				ContentValues vals = new ContentValues();
+				vals.put(DBContract.RouteStopEntry.COLUMN_NAME_ROUTE, routesJSONArray.getString(i));
+				vals.put(DBContract.RouteStopEntry.COLUMN_NAME_STOP, stopsForRoute.getString(j));
+				//Log.d(LOG_TAG, "Entry: r= " +  routesJSONArray.getString(i) + " s= " + stopsForRoute.getString(i));
+				db.insert(DBContract.RouteStopEntry.TABLE_NAME, null, vals);
+			}
+
 			db.insert(DBContract.RouteEntry.TABLE_NAME, null, values);
 		}
 
@@ -201,7 +214,6 @@ public class ShowStopsTask extends AsyncTask<Void, Void, String[]>
 			db.insert(DBContract.StopEntry.TABLE_NAME, null, values);
 			Stop newStop = new Stop(stopJSON.getInt(STOPID), stopJSON.getDouble(LATITUDE), stopJSON.getDouble(LONGITUDE), stopsJSONArray.getString(i), stopJSON.getString(TITLE));
 			stopsMap.put(stopsJSONArray.getString(i), newStop);
-
 		}
 		db.close();
 	}

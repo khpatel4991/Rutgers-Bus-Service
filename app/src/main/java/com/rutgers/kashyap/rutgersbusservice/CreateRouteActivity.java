@@ -42,38 +42,14 @@ import java.util.List;
 public class CreateRouteActivity extends Activity
 {
 	private final static String LOG_TAG = CreateRouteActivity.class.getSimpleName();
-	public HashMap<String, String> routesMap = new HashMap<String, String>();
-	private ArrayList<Double> seconds = new ArrayList<Double>();
-	private String route = "a";
 	public LinkedList myRoute = new LinkedList();
-	public ArrayList<LinkedList> myCustomRoutes = new ArrayList<LinkedList>();
 
 	protected void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_create_route);
 		if (savedInstanceState == null)
-		{
-			getFragmentManager().beginTransaction().add(R.id.container, new CreateRouteFragment(routesMap, route)).commit();
-		}
-		try
-		{
-			ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-			NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-			if (networkInfo != null && networkInfo.isConnected())
-			{
-				Log.i(LOG_TAG, "Network is Connected");
-				new GetRoutesTask(this).execute();
-			} else Log.e(LOG_TAG, "Network is not connected");
-
-		} catch (Exception e)
-		{
-			e.printStackTrace();
-		} finally
-		{
-			Log.d(LOG_TAG, "Finally");
-		}
-
+			getFragmentManager().beginTransaction().add(R.id.container, new CreateRouteFragment()).commit();
 	}
 
 
@@ -83,16 +59,6 @@ public class CreateRouteActivity extends Activity
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.create_route, menu);
 		return true;
-	}
-
-	@Override
-	public void onActivityResult(int requestCode, int resultCode, Intent data)
-	{
-		super.onActivityResult(requestCode, resultCode, data);
-		if (resultCode == RESULT_OK && requestCode == 15 && data != null)
-		{
-			new GetTimingsForRouteTask().execute(route, "Rutgers Student Center", data.getStringExtra("Source"), data.getStringExtra("Destination"));
-		}
 	}
 
 	@Override
@@ -115,30 +81,25 @@ public class CreateRouteActivity extends Activity
 		private HashMap<String, String> routesMap;
 		private String route;
 		private ArrayList<LinkedList> myCustomRoutes = new ArrayList<LinkedList>();
+		private LinkedList thisRoute = new LinkedList();
 
-		public CreateRouteFragment()
-		{}
-
-		public CreateRouteFragment(HashMap<String, String> m, String route)
-		{
-			this.routesMap = m;
-			this.route = route;
-		}
+		public CreateRouteFragment() {}
 
 		@Override
 		public View onCreateView(final LayoutInflater inflater, final ViewGroup container, Bundle savedInstanceState)
 		{
 			final View rootView = inflater.inflate(R.layout.fragment_create_route, container, false);
-			final Spinner spinner = (Spinner) rootView.findViewById(R.id.spinner_routes);
-			final Button selectStopsButton = (Button) rootView.findViewById(R.id.button_create);
-			final Button finishButton = (Button) rootView.findViewById(R.id.button_finish);
 
-			spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener()
+			new ShowRoutesTask(getActivity()).execute();
+
+			final Spinner spinner_routes = (Spinner) rootView.findViewById(R.id.spinner_routes);
+			spinner_routes.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener()
 			{
 				@Override
 				public void onItemSelected(AdapterView<?> adapterView, View view, int id, long pos)
 				{
-					route = spinner.getSelectedItem().toString();
+					route = spinner_routes.getSelectedItem().toString();
+					new GetStopsForRouteTask(getActivity()).execute(route);
 				}
 
 				@Override
@@ -148,30 +109,11 @@ public class CreateRouteActivity extends Activity
 				}
 			});
 
-
-			selectStopsButton.setOnClickListener(new View.OnClickListener()
-			{
-				@Override
-				public void onClick(View view)
-				{
-
-					String stopName = spinner.getSelectedItem().toString();
-
-					if (spinner.getSelectedItemId() != 0)
-					{
-						Intent intent = new Intent(getActivity(), SelectStopActivity.class);
-						intent.putExtra("Route", stopName);
-						intent.putExtra("RouteMap", routesMap);
-						getActivity().startActivityForResult(intent, 15);
-					}
-				}
-			});
-
 			return rootView;
 		}
 	}
-
-	private class GetTimingsForRouteTask extends AsyncTask<String, Void, ArrayList<Double>>
+}
+/*	private class GetTimingsForRouteTask extends AsyncTask<String, Void, ArrayList<Double>>
 	{
 		private final String LOG_TAG = GetTimingsForRouteTask.class.getSimpleName();
 		private final static String TITLE = "title";
@@ -202,8 +144,8 @@ public class CreateRouteActivity extends Activity
 				Log.d(LOG_TAG, "In DO");
 				URL url = new URL(BASE_URL + strings[0]);
 				HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-				conn.setReadTimeout(10000 /* milliseconds */);
-				conn.setConnectTimeout(15000 /* milliseconds */);
+				conn.setReadTimeout(10000 *//* milliseconds *//*);
+				conn.setConnectTimeout(15000 *//* milliseconds *//*);
 				conn.setRequestMethod("GET");
 				conn.setDoInput(true);
 
@@ -313,8 +255,8 @@ public class CreateRouteActivity extends Activity
 				Log.d(LOG_TAG, "In DO");
 				URL url = new URL(BASE_URL);
 				HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-				conn.setReadTimeout(10000 /* milliseconds */);
-				conn.setConnectTimeout(15000 /* milliseconds */);
+				conn.setReadTimeout(10000 *//* milliseconds *//*);
+				conn.setConnectTimeout(15000 *//* milliseconds *//*);
 				conn.setRequestMethod("GET");
 				conn.setDoInput(true);
 
@@ -393,5 +335,4 @@ public class CreateRouteActivity extends Activity
 			routes.add(0, "Select a stop");
 			return routes.toArray(new String[routes.size()]);
 		}
-	}
-}
+	}*/

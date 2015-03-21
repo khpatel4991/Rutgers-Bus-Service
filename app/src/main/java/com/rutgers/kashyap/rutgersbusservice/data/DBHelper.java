@@ -23,19 +23,18 @@ public class DBHelper extends SQLiteOpenHelper
 	@Override
 	public void onCreate(SQLiteDatabase db)
 	{
-		Log.d(LOG_TAG, DBContract.RouteEntry.CREATE_ROUTE_TABLE_QUERY);
-		Log.d(LOG_TAG, DBContract.StopEntry.CREATE_STOP_TABLE_QUERY);
-		db.execSQL(DBContract.RouteEntry.CREATE_ROUTE_TABLE_QUERY);
-		db.execSQL(DBContract.StopEntry.CREATE_STOP_TABLE_QUERY);
+		Log.d(LOG_TAG, DBContract.RouteStopEntry.CREATE_TABLE_QUERY);
+		db.execSQL(DBContract.RouteEntry.CREATE_TABLE_QUERY);
+		db.execSQL(DBContract.StopEntry.CREATE_TABLE_QUERY);
+		db.execSQL(DBContract.RouteStopEntry.CREATE_TABLE_QUERY);
 	}
 
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion)
 	{
-		Log.d(LOG_TAG, DBContract.RouteEntry.DELETE_ROUTE_TABLE_QUERY);
-		Log.d(LOG_TAG, DBContract.StopEntry.DELETE_ROUTE_TABLE_QUERY);
-		db.execSQL(DBContract.RouteEntry.DELETE_ROUTE_TABLE_QUERY);
-		db.execSQL(DBContract.StopEntry.DELETE_ROUTE_TABLE_QUERY);
+		db.execSQL(DBContract.RouteEntry.DELETE_TABLE_QUERY);
+		db.execSQL(DBContract.StopEntry.DELETE_TABLE_QUERY);
+		db.execSQL(DBContract.RouteStopEntry.DELETE_TABLE_QUERY);
 		onCreate(db);
 	}
 }
