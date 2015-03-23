@@ -47,7 +47,6 @@ public class GetStopsForRouteTask extends AsyncTask<String, Void, String[]>
 	@Override
 	protected String[] doInBackground(String... route)
 	{
-
 		return getStopsForRouteFromDB(route[0]);
 	}
 
@@ -78,7 +77,6 @@ public class GetStopsForRouteTask extends AsyncTask<String, Void, String[]>
 		}
 		c.close();
 		db.close();
-		Log.d(LOG_TAG, Integer.toString(stopsForRoute.size()));
 		return stopsForRoute.toArray(new String[stopsForRoute.size()]);
 	}
 

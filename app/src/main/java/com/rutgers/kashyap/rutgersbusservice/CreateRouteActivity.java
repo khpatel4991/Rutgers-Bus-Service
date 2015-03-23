@@ -19,6 +19,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.rutgers.kashyap.rutgersbusservice.LinkedList.LinkedList;
@@ -37,12 +38,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.*;
 
 
 public class CreateRouteActivity extends Activity
 {
 	private final static String LOG_TAG = CreateRouteActivity.class.getSimpleName();
-	public LinkedList myRoute = new LinkedList();
 
 	protected void onCreate(Bundle savedInstanceState)
 	{
@@ -81,7 +82,8 @@ public class CreateRouteActivity extends Activity
 		private HashMap<String, String> routesMap;
 		private String route;
 		private ArrayList<LinkedList> myCustomRoutes = new ArrayList<LinkedList>();
-		private LinkedList thisRoute = new LinkedList();
+		private List<Node> thisRoute = new ArrayList<>();
+		//private  thisRoute = new LinkedList();
 
 		public CreateRouteFragment() {}
 
@@ -92,24 +94,71 @@ public class CreateRouteActivity extends Activity
 
 			new ShowRoutesTask(getActivity()).execute();
 
-			final Spinner spinner_routes = (Spinner) rootView.findViewById(R.id.spinner_routes);
-			spinner_routes.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener()
+			final Spinner spinnerRoutes = (Spinner) rootView.findViewById(R.id.spinner_routes);
+
+			final Spinner spinnerSource = (Spinner) rootView.findViewById(R.id.spinner_source);
+			final Spinner spinnerDestination = (Spinner) rootView.findViewById(R.id.spinner_destination);
+
+			final Button buttonAdd = (Button) rootView.findViewById(R.id.button_create);
+
+			final TextView currentText = (TextView) rootView.findViewById(R.id.label_add);
+
+			spinnerRoutes.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener()
 			{
 				@Override
 				public void onItemSelected(AdapterView<?> adapterView, View view, int id, long pos)
 				{
-					route = spinner_routes.getSelectedItem().toString();
+					route = spinnerRoutes.getSelectedItem().toString();
 					new GetStopsForRouteTask(getActivity()).execute(route);
 				}
 
 				@Override
-				public void onNothingSelected(AdapterView<?> adapterView)
+				public void onNothingSelected(AdapterView<?> parent)
 				{
 
 				}
 			});
 
+			buttonAdd.setOnClickListener(new View.OnClickListener()
+			{
+				@Override
+				public void onClick(View v)
+				{
+					Log.d(LOG_TAG, "Button Click");
+					Node newNode = new Node();
+					newNode.route = spinnerRoutes.getSelectedItem().toString();
+					newNode.source = spinnerSource.getSelectedItem().toString();
+					newNode.destination = spinnerDestination.getSelectedItem().toString();
+					newNode.minutes.add(23.36);
+					newNode.minutes.add(45.52);
+					thisRoute.add(newNode);
+					//thisRoute.append(newNode);
+					Log.d(LOG_TAG, "source= " + spinnerSource.getSelectedItem().toString());
+					Log.d(LOG_TAG, "LL Lenght: " + thisRoute.size());
+					currentText.setText(updateText());
+					//currentText.setText(thisRoute.toString());
+				}
+			});
 			return rootView;
+		}
+
+		private String updateText()
+		{
+			StringBuilder output = new StringBuilder();
+			for(int j = 0; j < thisRoute.size(); j++)
+			{
+				Node temp = thisRoute.get(j);
+				output.append(temp.route + "\n");
+				output.append("From: " + temp.source + " ");
+				output.append("To: " + temp.destination + "\n");
+				output.append("Time:\n");
+
+				for (int i = 0; i < temp.minutes.size(); i++)
+					output.append(temp.minutes.get(i) + ",");
+				output.append("\n");
+			}
+			Log.d("LL", "Final = " + output.toString());
+			return output.toString();
 		}
 	}
 }

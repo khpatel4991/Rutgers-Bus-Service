@@ -31,4 +31,9 @@ public class Node
 		this.minutes = node.minutes;
 	}
 
+	public Node()
+	{
+		this.next = null;
+	}
+
 }
