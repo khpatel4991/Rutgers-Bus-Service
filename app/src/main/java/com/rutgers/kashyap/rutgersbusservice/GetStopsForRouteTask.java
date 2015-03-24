@@ -5,16 +5,13 @@ import android.app.ProgressDialog;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
-import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
-import com.rutgers.kashyap.rutgersbusservice.Graph.Stop;
 import com.rutgers.kashyap.rutgersbusservice.data.DBContract;
 import com.rutgers.kashyap.rutgersbusservice.data.DBHelper;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -72,7 +69,7 @@ public class GetStopsForRouteTask extends AsyncTask<String, Void, String[]>
 		{
 			do
 			{
-				stopsForRoute.add(c.getString(1) + " (" + c.getString(0) + ")");
+				stopsForRoute.add(c.getString(1));
 			} while(c.moveToNext());
 		}
 		c.close();

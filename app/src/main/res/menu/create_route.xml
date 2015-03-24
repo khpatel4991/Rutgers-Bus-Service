@@ -12,4 +12,9 @@
         android:title="View Custom Routes"
         android:showAsAction="never"/>
 
+    <item
+        android:id="@+id/action_view_refresh"
+        android:showAsAction="always"
+        android:title="REFRESH" />
+
 </menu>

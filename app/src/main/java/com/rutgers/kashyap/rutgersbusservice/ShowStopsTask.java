@@ -163,7 +163,7 @@ public class ShowStopsTask extends AsyncTask<Void, Void, String[]>
 		{
 			do
 			{
-				stops.add(c.getString(1) + " (" + c.getString(0) + ")");
+				stops.add(c.getString(1));
 			} while(c.moveToNext());
 		}
 		c.close();
@@ -187,13 +187,11 @@ public class ShowStopsTask extends AsyncTask<Void, Void, String[]>
 			values.put(DBContract.RouteEntry.COLUMN_NAME_ROUTE_TITLE, routeJSON.getString(TITLE));
 
 			JSONArray stopsForRoute = routeJSON.getJSONArray(STOPS);
-			Log.d(LOG_TAG, "route= " + routesJSONArray.getString(i) + " len=" + stopsForRoute.length());
 			for(int j = 0; j < stopsForRoute.length(); j++)
 			{
 				ContentValues vals = new ContentValues();
 				vals.put(DBContract.RouteStopEntry.COLUMN_NAME_ROUTE, routesJSONArray.getString(i));
 				vals.put(DBContract.RouteStopEntry.COLUMN_NAME_STOP, stopsForRoute.getString(j));
-				//Log.d(LOG_TAG, "Entry: r= " +  routesJSONArray.getString(i) + " s= " + stopsForRoute.getString(i));
 				db.insert(DBContract.RouteStopEntry.TABLE_NAME, null, vals);
 			}
 

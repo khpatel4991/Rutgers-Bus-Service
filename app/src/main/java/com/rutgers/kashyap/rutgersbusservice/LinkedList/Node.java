@@ -10,30 +10,16 @@ public class Node
 	public String route;
 	public String source;
 	public String destination;
-	public ArrayList<Double> minutes = new ArrayList<Double>();
-	public Node next;
-
-	public Node(String route, String source, String destination, ArrayList<Double> minutes)
-	{
-		this.next = null;
-		this.route = route;
-		this.source = source;
-		this.destination = destination;
-		this.minutes = minutes;
-	}
+	public ArrayList<Double> sMinutes = new ArrayList<>();
+    public ArrayList<Double> dMinutes = new ArrayList<>();
 
 	public Node(Node node)
 	{
-		this.next = node.next;
 		this.route = node.route;
 		this.source = node.source;
 		this.destination = node.destination;
-		this.minutes = node.minutes;
+		this.sMinutes = node.sMinutes;
+        this.dMinutes = node.dMinutes;
 	}
-
-	public Node()
-	{
-		this.next = null;
-	}
-
+	public Node() {}
 }

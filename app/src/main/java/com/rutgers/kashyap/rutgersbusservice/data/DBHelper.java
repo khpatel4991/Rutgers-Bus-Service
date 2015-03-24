@@ -3,7 +3,6 @@ package com.rutgers.kashyap.rutgersbusservice.data;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
 
 /**
  * Created by khpatel4991 on 3/20/2015.
@@ -23,10 +22,10 @@ public class DBHelper extends SQLiteOpenHelper
 	@Override
 	public void onCreate(SQLiteDatabase db)
 	{
-		Log.d(LOG_TAG, DBContract.RouteStopEntry.CREATE_TABLE_QUERY);
 		db.execSQL(DBContract.RouteEntry.CREATE_TABLE_QUERY);
 		db.execSQL(DBContract.StopEntry.CREATE_TABLE_QUERY);
 		db.execSQL(DBContract.RouteStopEntry.CREATE_TABLE_QUERY);
+        db.execSQL(DBContract.RouteStopTimeEntry.CREATE_TABLE_QUERY);
 	}
 
 	@Override
@@ -35,6 +34,7 @@ public class DBHelper extends SQLiteOpenHelper
 		db.execSQL(DBContract.RouteEntry.DELETE_TABLE_QUERY);
 		db.execSQL(DBContract.StopEntry.DELETE_TABLE_QUERY);
 		db.execSQL(DBContract.RouteStopEntry.DELETE_TABLE_QUERY);
+        db.execSQL(DBContract.RouteStopTimeEntry.DELETE_TABLE_QUERY);
 		onCreate(db);
 	}
 }

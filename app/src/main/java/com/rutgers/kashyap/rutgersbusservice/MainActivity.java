@@ -2,12 +2,8 @@ package com.rutgers.kashyap.rutgersbusservice;
 
 import android.app.Activity;
 import android.app.Fragment;
-import android.content.Context;
 import android.content.Intent;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -53,9 +49,7 @@ public class MainActivity extends Activity
 
 	public static class MainFragment extends Fragment
 	{
-
 		public MainFragment() {}
-
 		@Override
 		public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 		{

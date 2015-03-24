@@ -2,43 +2,20 @@ package com.rutgers.kashyap.rutgersbusservice;
 
 import android.app.Activity;
 import android.app.Fragment;
-import android.app.ProgressDialog;
-import android.content.Context;
-import android.content.Intent;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
-import android.widget.TextView;
-import android.widget.Toast;
 
-import com.rutgers.kashyap.rutgersbusservice.LinkedList.LinkedList;
 import com.rutgers.kashyap.rutgersbusservice.LinkedList.Node;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.*;
 
 
 public class CreateRouteActivity extends Activity
@@ -78,12 +55,7 @@ public class CreateRouteActivity extends Activity
 	 */
 	public static class CreateRouteFragment extends Fragment
 	{
-
-		private HashMap<String, String> routesMap;
-		private String route;
-		private ArrayList<LinkedList> myCustomRoutes = new ArrayList<LinkedList>();
 		private List<Node> thisRoute = new ArrayList<>();
-		//private  thisRoute = new LinkedList();
 
 		public CreateRouteFragment() {}
 
@@ -101,15 +73,12 @@ public class CreateRouteActivity extends Activity
 
 			final Button buttonAdd = (Button) rootView.findViewById(R.id.button_create);
 
-			final TextView currentText = (TextView) rootView.findViewById(R.id.label_add);
-
 			spinnerRoutes.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener()
 			{
 				@Override
 				public void onItemSelected(AdapterView<?> adapterView, View view, int id, long pos)
 				{
-					route = spinnerRoutes.getSelectedItem().toString();
-					new GetStopsForRouteTask(getActivity()).execute(route);
+					new GetStopsForRouteTask(getActivity()).execute(spinnerRoutes.getSelectedItem().toString());
 				}
 
 				@Override
@@ -124,41 +93,19 @@ public class CreateRouteActivity extends Activity
 				@Override
 				public void onClick(View v)
 				{
-					Log.d(LOG_TAG, "Button Click");
 					Node newNode = new Node();
 					newNode.route = spinnerRoutes.getSelectedItem().toString();
 					newNode.source = spinnerSource.getSelectedItem().toString();
 					newNode.destination = spinnerDestination.getSelectedItem().toString();
-					newNode.minutes.add(23.36);
-					newNode.minutes.add(45.52);
-					thisRoute.add(newNode);
-					//thisRoute.append(newNode);
-					Log.d(LOG_TAG, "source= " + spinnerSource.getSelectedItem().toString());
-					Log.d(LOG_TAG, "LL Lenght: " + thisRoute.size());
-					currentText.setText(updateText());
-					//currentText.setText(thisRoute.toString());
+					new GetTimingForRouteStopTask(getActivity(), thisRoute, newNode.sMinutes, newNode.dMinutes).execute(
+                            newNode.route,
+                            newNode.source,
+                            newNode.destination
+                    );
+                    thisRoute.add(newNode);
 				}
 			});
 			return rootView;
-		}
-
-		private String updateText()
-		{
-			StringBuilder output = new StringBuilder();
-			for(int j = 0; j < thisRoute.size(); j++)
-			{
-				Node temp = thisRoute.get(j);
-				output.append(temp.route + "\n");
-				output.append("From: " + temp.source + " ");
-				output.append("To: " + temp.destination + "\n");
-				output.append("Time:\n");
-
-				for (int i = 0; i < temp.minutes.size(); i++)
-					output.append(temp.minutes.get(i) + ",");
-				output.append("\n");
-			}
-			Log.d("LL", "Final = " + output.toString());
-			return output.toString();
 		}
 	}
 }
