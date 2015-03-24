@@ -22,6 +22,13 @@ public class CreateRouteActivity extends Activity
 {
 	private final static String LOG_TAG = CreateRouteActivity.class.getSimpleName();
 
+    private List<Node> thisRoute = new ArrayList<>();
+    public String _currentRoute;
+    public String _currentSource;
+    public String _currentDestination;
+    public ArrayList<Double> _sList = new ArrayList<>();
+    public ArrayList<Double> _dList = new ArrayList<>();
+
 	protected void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
@@ -47,15 +54,19 @@ public class CreateRouteActivity extends Activity
 		// as you specify a parent activity in AndroidManifest.xml.
 		int id = item.getItemId();
 		if (id == R.id.action_settings) return true;
+        if (id == R.id.action_view_refresh) new GetTimingForRouteStopTask(CreateRouteActivity.this, thisRoute, _sList, _dList).execute(
+                _currentRoute,
+                _currentSource,
+                _currentDestination
+        );
 		return super.onOptionsItemSelected(item);
 	}
 
 	/**
 	 * A placeholder fragment containing a simple view.
 	 */
-	public static class CreateRouteFragment extends Fragment
+	public class CreateRouteFragment extends Fragment
 	{
-		private List<Node> thisRoute = new ArrayList<>();
 
 		public CreateRouteFragment() {}
 
@@ -97,7 +108,13 @@ public class CreateRouteActivity extends Activity
 					newNode.route = spinnerRoutes.getSelectedItem().toString();
 					newNode.source = spinnerSource.getSelectedItem().toString();
 					newNode.destination = spinnerDestination.getSelectedItem().toString();
-					new GetTimingForRouteStopTask(getActivity(), thisRoute, newNode.sMinutes, newNode.dMinutes).execute(
+
+                    _currentRoute = newNode.route;
+                    _currentSource = newNode.source;
+                    _currentDestination = newNode.destination;
+                    _sList = newNode.sMinutes;
+                    _dList = newNode.dMinutes;
+                            new GetTimingForRouteStopTask(getActivity(), thisRoute, newNode.sMinutes, newNode.dMinutes).execute(
                             newNode.route,
                             newNode.source,
                             newNode.destination

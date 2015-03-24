@@ -155,6 +155,8 @@ public class GetTimingForRouteStopTask extends AsyncTask<String, Void, String>
 
     void addTimingInDB(JSONArray jsonArray) throws JSONException
     {
+        _sMinutes.clear();
+        _dMinutes.clear();
         for (int i = 0; i < jsonArray.length(); i++)
         {
             JSONObject stop = jsonArray.getJSONObject(i);
@@ -188,11 +190,11 @@ public class GetTimingForRouteStopTask extends AsyncTask<String, Void, String>
             output.append(temp.route + "\n");
             output.append(temp.source + ": ");
             for (int i = 0; i < temp.sMinutes.size(); i++)
-                output.append(temp.sMinutes.get(i) + ",");
+                output.append(temp.sMinutes.get(i).intValue() + ", ");
             output.append("\n");
             output.append(temp.destination + ": ");
             for (int i = 0; i < temp.dMinutes.size(); i++)
-                output.append(temp.dMinutes.get(i) + ",");
+                output.append(temp.dMinutes.get(i).intValue() + ", ");
             output.append("\n");
         }
         output.append("\n");
