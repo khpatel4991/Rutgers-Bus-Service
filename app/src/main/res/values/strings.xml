@@ -12,5 +12,6 @@
     <string name="label_finish">Finish</string>
     <string name="title_activity_select_stop">SelectStopActivity</string>
     <string name="Label_selected_stops">Select Stops, Go Back</string>
+    <string name="title_activity_view_routes">ViewRoutesActivity</string>
 
 </resources>

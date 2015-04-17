@@ -75,6 +75,8 @@ public class CreateRouteActivity extends Activity
 		{
 			final View rootView = inflater.inflate(R.layout.fragment_create_route, container, false);
 
+			//new ShowStopsTask(getActivity()).execute();
+
 			new ShowRoutesTask(getActivity()).execute();
 
 			final Spinner spinnerRoutes = (Spinner) rootView.findViewById(R.id.spinner_routes);

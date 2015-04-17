@@ -2,6 +2,7 @@ package com.rutgers.kashyap.rutgersbusservice;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
@@ -17,6 +18,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
@@ -39,6 +41,8 @@ public class GetTimingForRouteStopTask extends AsyncTask<String, Void, String>
     private DBHelper _DBHelper;
 
     SQLiteDatabase _db;
+
+    private static final String FILENAME = "routes";
 
 
     private final static String URL_BASE = "http://runextbus.herokuapp.com/route/";
@@ -135,7 +139,22 @@ public class GetTimingForRouteStopTask extends AsyncTask<String, Void, String>
                 return null;
             }
             addTimingInDB(jsonArray);
-            return updateText();
+
+            String text = updateText();
+
+            FileOutputStream outputStream;
+
+            try
+            {
+                outputStream = _activity.openFileOutput(FILENAME, Context.MODE_PRIVATE);
+                outputStream.write(text.getBytes());
+                outputStream.close();
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+            }
+            return text;
         }
         catch (Exception e)
         {
